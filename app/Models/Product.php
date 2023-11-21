@@ -24,7 +24,7 @@ class Product extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function galeries()
+    public function galleries()
     {
         return $this->hasMany(ProductGallery::class, 'products_id', 'id');
     }
