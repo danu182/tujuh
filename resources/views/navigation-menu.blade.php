@@ -20,6 +20,9 @@
                         <x-nav-link href="{{ route('dashboard.product.index') }}" :active="request()->routeIs('dashboard.product.index')">
                             {{ __('Product') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('dashboard.transaction.index') }}" :active="request()->routeIs('dashboard.transaction.index')">
+                            {{ __('Transaction') }}
+                        </x-nav-link>
      
                     @endif
 
@@ -155,6 +158,9 @@
             @if (Auth::user()->roles=='ADMIN')
             <x-responsive-nav-link href="{{ route('dashboard.product.index') }}" :active="request()->routeIs('dashboard.product.index')">
                 {{ __('Product') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('dashboard.transaction.index') }}" :active="request()->routeIs('dashboard.transaction.index')">
+                {{ __('Transaction') }}
             </x-responsive-nav-link>
                 
             @endif
