@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Product') }}
+            {{ __('User') }}
         </h2>
     </x-slot>  
 
@@ -15,7 +15,8 @@
                 columns: [
                     { data: 'id', name: 'id', width: '5%'},
                     { data: 'name', name: 'name' },
-                    { data: 'price', name: 'price' },
+                    { data: 'email', name: 'email' },
+                    { data: 'roles', name: 'roles' },
                     {
                         data: 'action',
                         name: 'action',
@@ -42,7 +43,8 @@
                             <tr>
                                 <th>ID</th>    
                                 <th>nama</th>    
-                                <th>harga</th>    
+                                <th>emial</th>    
+                                <th>roles</th>    
                                 <th>aksi</th>    
                             </tr>    
                         </thead>    

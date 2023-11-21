@@ -23,6 +23,9 @@
                         <x-nav-link href="{{ route('dashboard.transaction.index') }}" :active="request()->routeIs('dashboard.transaction.index')">
                             {{ __('Transaction') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs('dashboard.user.index')">
+                            {{ __('User') }}
+                        </x-nav-link>
      
                     @endif
 
@@ -161,6 +164,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('dashboard.transaction.index') }}" :active="request()->routeIs('dashboard.transaction.index')">
                 {{ __('Transaction') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs('dashboard.user.index')">
+                {{ __('User') }}
             </x-responsive-nav-link>
                 
             @endif
