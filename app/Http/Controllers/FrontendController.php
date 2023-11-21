@@ -7,6 +7,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use PhpParser\Node\Stmt\Return_;
+use PHPUnit\Framework\MockObject\ReturnValueNotConfiguredException;
 
 class FrontendController extends Controller
 {
@@ -35,6 +37,14 @@ class FrontendController extends Controller
         ]);
 
         return redirect()->route('cart');
+    }
+
+    public function cartDelete($id)
+    {
+        
+        $item= Cart::findOrFail($id);
+        $item->delete();
+        return redirect('cart');
     }
 
     public function cart(Request $request)
