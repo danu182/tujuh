@@ -108,9 +108,62 @@
             
             <!-- END: ROW 1 -->
 
-          </div>  
+          </div>
+
+            
+          
           <div class="w-full md:px-4 md:w-4/12" id="shipping-detail">
-            <div class="bg-gray-100 px-4 py-6 md:p-8 md:rounded-3xl">
+            <div class="bg-gray-100 px-4 py-6 md:p-8 md:rounded-3xl mb-4">
+              
+              <h1>judul</h1>
+              {{-- <form action="" method="post"> --}}
+                <div class="flex flex-col mb-4">
+                  <label for="phone-number" class="text-sm mb-2"
+                    >courier</label
+                  >
+                  <select name="courier" class="border-gray-200 border rounded-lg px-4 py-2 bg-white text-sm focus:border-blue-200 focus:outline-none" id="courier">
+                    <option value="jne">jne</option>  
+                    <option value="pos">pos</option>  
+                    <option value="tiki">tiki</option>  
+                  </select>
+                  
+                </div>
+                
+                <div class="flex flex-col mb-4">
+                  <label for="phone-number" class="text-sm mb-2"
+                    >koata tujuan</label
+                  >
+                  <select name="kota_tujuan" class="border-gray-200 border rounded-lg px-4 py-2 bg-white text-sm focus:border-blue-200 focus:outline-none" id="kota_tujuan">
+                    {{-- <option value="{{ $transaction->status }}">{{ $transaction->status }}</option> --}}
+                    @foreach ($city as $kota)
+                      <option value="SHIPPING">{{ $kota['city_name'] }}</option>  
+                    @endforeach
+                  </select>
+                </div>
+
+                <div class="flex flex-col mb-4">
+                  <label for="phone-number" class="text-sm mb-2"
+                    >weight</label
+                  >
+                  <input
+                    data-input
+                    type="number"
+                    name="weight"
+                    id="weight"
+                    class="border-gray-200 border rounded-lg px-4 py-2 bg-white text-sm focus:border-blue-200 focus:outline-none"
+                    placeholder="weight" value="1000"
+                  />
+                </div>
+                <button
+                type="submit" class="bg-pink-400 text-black hover:bg-black hover:text-pink-400 focus:outline-none w-full py-3 rounded-full text-lg focus:text-black transition-all duration-200 px-6 btn-check">
+                cek ongkir
+              </button>
+
+
+              {{-- </form> --}}
+              
+            </div>
+              <div class="bg-gray-100 px-4 py-6 md:p-8 md:rounded-3xl">
               <form action="{{ route('checkout') }}" method="POST">
                 @csrf
                 <div class="flex flex-start mb-6">
@@ -168,6 +221,10 @@
                     placeholder="Input your phone number"
                   />
                 </div>
+
+               
+
+                
 
                 <div class="flex flex-col mb-4">
                   <label for="complete-name" class="text-sm mb-2"
@@ -281,5 +338,44 @@
         </div>
       </div>
     </section>
-    <!-- END: COMPLETE YOUR ROOM -->
+
+
+
+    <script>
+      $("#cek").click(function(){
+			//Mengambil value dari option select provinsi asal, kabupaten, kurir, berat kemudian parameternya dikirim menggunakan ajax 
+			var asal = 15;
+			var kab = $('#kota_tujuan').val();
+			var kurir = $('#courier').val();
+			var berat = $('#weight  ').val();
+
+      		$.ajax({
+            	type : 'POST',
+           		url : 'http://localhost/rajaongkir/cek_ongkir.php',
+            	data :  {'kab_id' : kab, 'kurir' : kurir, 'asal' : asal, 'berat' : berat},
+					success: function (data) {
+
+					//jika data berhasil didapatkan, tampilkan ke dalam element div ongkir
+					$("#ongkir").text(data);
+				}
+          	});$("#cek").click(function(){
+			//Mengambil value dari option select provinsi asal, kabupaten, kurir, berat kemudian parameternya dikirim menggunakan ajax 
+			var origin = 15;
+			var kab = $('#kota_tujuan').val();
+			var kurir = $('#courier').val();
+			var berat = $('#weight').val();
+
+      		$.ajax({
+            	type : 'POST',
+           		url : 'cek_rajaongkir',
+            	data :  {'kab_id' : kab, 'kurir' : kurir, 'asal' : asal, 'berat' : berat},
+					success: function (data) {
+
+					//jika data berhasil didapatkan, tampilkan ke dalam element div ongkir
+					$("#ongkir").text(data);
+				}
+          	});
+          });
+    </script>
+    // <!-- END: COMPLETE YOUR ROOM -->
 @endsection

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Stmt\Return_;
 use PHPUnit\Framework\MockObject\ReturnValueNotConfiguredException;
@@ -53,7 +54,9 @@ class FrontendController extends Controller
     {
         $carts=Cart::with(['product.galleries'])->where('users_id', Auth::user()->id)->get();
 
-        return view('pages.frontend.cart', compact('carts'));
+        $city= $this->rajaOngkir_city();
+
+        return view('pages.frontend.cart', compact('carts', 'city'));
     }
 
     public function nomer()
@@ -116,6 +119,28 @@ class FrontendController extends Controller
     public function success(Request $request)
     {
         return view('pages.frontend.success');
+    }
+
+
+
+    public function rajaOngkir_city()
+    {
+        $response =Http::withHeaders([
+            'key'=> '74e72558201e5c7db167c146420ab0dd'])->get('https://api.rajaongkir.com/starter/city');
+            $kota= $response['rajaongkir']['results']   ;
+        
+            return $kota;
+    }
+
+    public function cek_rajaongkir(Request $request)
+    {
+        $responseCost =Http::withHeaders(['key'=> '74e72558201e5c7db167c146420ab0dd'])->post('https://api.rajaongkir.com/starter/cost',[
+            // 'origin'=>$request->kota_asal,
+            'origin'=> 151,
+            'destination'=>$request->kota_tujuan,
+            'weight'=> $request->berat,
+            'courier'=>$request->kurir,
+        ]);
     }
 
 }

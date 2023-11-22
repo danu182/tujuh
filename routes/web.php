@@ -62,6 +62,12 @@ Route::middleware(['auth:sanctum','verified',])->name('dashboard.')->prefix('das
 
 });
 
+
+
+
+Route::get('/rajaongkir',[FrontendController::class,'rajaOngkir_city']);
+Route::post('/cek_rajaongkir',[FrontendController::class,'cek_rajaongkir']);
+
 // Route::middleware([
 //     'auth:sanctum',
 //     config('jetstream.auth_session'),
