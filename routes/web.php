@@ -46,6 +46,9 @@ Route::middleware(['auth:sanctum','verified',])->group(function(){
 
 });
 
+Route::get('payment/success', [FrontendController::class,'midtransCallback']);
+Route::post('payment/success', [FrontendController::class,'midtransCallback']);
+
 
 Route::middleware(['auth:sanctum','verified',])->name('dashboard.')->prefix('dashboard')->group(function(){
     Route::get('/', [DashboardController::class,'index'])->name('index');

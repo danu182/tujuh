@@ -16,6 +16,9 @@ use PhpParser\Node\Stmt\Return_;
 use PHPUnit\Framework\MockObject\ReturnValueNotConfiguredException;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans;
+// use Midtrans\Config;
+// use Midtrans\Snap;
 
 class FrontendController extends Controller
 {
@@ -96,8 +99,7 @@ class FrontendController extends Controller
         $data = $request->all();
 
         $mama= Transaction::where('id',3)->get();
-       
-        
+               
         $nomer_invoice =$this->nomer(); 
         $kode="INV";
 
@@ -110,8 +112,6 @@ class FrontendController extends Controller
         $data['transaction_code']= $inv;
         $data['users_id']=Auth::user()->id;
         $data['total_price']=$carts->sum('product.price');
-
-        // return $data;
 
         // create transaction
         $transaction =Transaction::create($data);
@@ -169,6 +169,67 @@ class FrontendController extends Controller
           }
         
     }
+    
+   
+    public function midtransCallback(Request $request)
+    {
+
+        Config::$serverKey=config('services.midtrans.serverKey');
+        Config::$isProduction = config('services.midtrans.isProduction');
+        Config::$isSanitized = config('services.midtrans.isSacitized');
+        Config::$is3ds = config('services.midtrans.is3ds');
+
+        $notif = $request->method() == 'POST' ? new Midtrans\Notification() : Midtrans\Transaction::status($request->order_id);
+
+        $transaction_status = $notif->transaction_status;
+        $fraud = $notif->fraud_status;
+
+        $checkout_id =($notif->order_id);
+        $checkout = Transaction::where('transaction_code',$checkout_id )->first();
+        
+        if ($transaction_status == 'capture') {
+            if ($fraud == 'challenge') {
+                // TODO Set payment status in merchant's database to 'challenge'
+                $checkout->status = 'PENDING';
+            }
+            else if ($fraud == 'accept') {
+                // TODO Set payment status in merchant's database to 'success'
+                $checkout->status = 'paid';
+            }
+        }
+        else if ($transaction_status == 'cancel') {
+            if ($fraud == 'challenge') {
+                // TODO Set payment status in merchant's database to 'failure'
+                $checkout->status = 'failed';
+            }
+            else if ($fraud == 'accept') {
+                // TODO Set payment status in merchant's database to 'failure'
+                $checkout->status = 'failed';
+            }
+        }
+        else if ($transaction_status == 'deny') {
+            // TODO Set payment status in merchant's database to 'failure'
+            $checkout->status = 'failed';
+        }
+        else if ($transaction_status == 'settlement') {
+            // TODO set payment status in merchant's database to 'Settlement'
+            $checkout->status = 'paid';
+        }
+        else if ($transaction_status == 'PENDING') {
+            // TODO set payment status in merchant's database to 'Pending'
+            $checkout->status = 'PENDING';
+        }
+        else if ($transaction_status == 'expire') {
+            // TODO set payment status in merchant's database to 'expire'
+            $checkout->status = 'failed';
+        }
+
+        $checkout->save();
+
+        return view('checkout-success');
+        // return redirect()->route('checkout-success');
+    }
+    
     
 
     public function success(Request $request)
