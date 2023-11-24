@@ -13,6 +13,7 @@ class TransactionItem extends Model
         'users_id',
         'products_id',
         'transactions_id',
+        'transaction_code',
     ];
 
 

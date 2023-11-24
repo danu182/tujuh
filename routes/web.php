@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductGalleryController;
+use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Routing\RouteRegistrar;
@@ -69,11 +70,16 @@ Route::get('/rajaongkir',[FrontendController::class,'rajaOngkir_city']);
 Route::post('/cek_rajaongkir',[FrontendController::class,'cek_rajaongkir']);
 
 // Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
+    //     'auth:sanctum',
+    //     config('jetstream.auth_session'),
+    //     'verified',
 // ])->group(function () {
 //     Route::get('/dashboard', function () {
 //         return view('dashboard');
 //     })->name('dashboard');
 // });
+
+
+Route::get('ongkir',[RajaOngkirController::class,'index'])->name('ongkir');
+Route::get('cities',[RajaOngkirController::class,'cities'])->name('cities');
+Route::post('check-ongkir', [RajaOngkirController::class, 'cek_ongkir'])->name('cek_ongkir');

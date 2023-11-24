@@ -6,12 +6,16 @@ use App\Http\Requests\CheckoutRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\TransactionItem;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Stmt\Return_;
 use PHPUnit\Framework\MockObject\ReturnValueNotConfiguredException;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class FrontendController extends Controller
 {
@@ -91,27 +95,80 @@ class FrontendController extends Controller
     {
         $data = $request->all();
 
-        $nomer_invoice =$this->nomer();
+        $mama= Transaction::where('id',3)->get();
+       
+        
+        $nomer_invoice =$this->nomer(); 
         $kode="INV";
 
-        $mama = $kode. $nomer_invoice;
-        return $mama;
-
+        $inv = $kode. $nomer_invoice;
 
         // get data dari Cart per user
-
+        $carts =Cart::with(['product'])->where('users_id', Auth::user()->id)->get();
+        
         // add to transaction data
+        $data['transaction_code']= $inv;
+        $data['users_id']=Auth::user()->id;
+        $data['total_price']=$carts->sum('product.price');
+
+        // return $data;
 
         // create transaction
+        $transaction =Transaction::create($data);
 
         // create transaction item
+        foreach ($carts as $cart) {
+            $items[]=TransactionItem::create([
+                'transactions_id'=>$transaction->id,
+                'users_id'=>$cart->users_id,
+                'products_id'=>$cart->products_id,
+                'transaction_code'=> $transaction->transaction_code,
+            ]);
+        }
+
+        // hapus carts
+        Cart::where('users_id', Auth::user()->id)->delete();
 
         // konfigurasi midtrans
+        Config::$serverKey=config('services.midtrans.serverKey');
+        Config::$isProduction = config('services.midtrans.isProduction');
+        Config::$isSanitized = config('services.midtrans.isSacitized');
+        Config::$is3ds = config('services.midtrans.is3ds');
 
         // setup variable midtrans
+        $midtrans=[
+            'transaction_details' => [
+                'order_id' => $inv,
+                'gross_amount' => (int)$transaction->total_price,
+            ],
+            'customer_details'=>[
+                'first_name'       => Auth::user()->name,
+                // 'last_name'        => "Setiawan",
+                'email'            => Auth::user()->email,
+                'phone'            => "081322311801",
+                'billing_address'  => $request->address,
+                'shipping_address' => $request->address,
+            ],
+            'enabled_payments'=>['gopay', 'bank_transfer'],
+            'vtweb'=>[]
+        ];
+
+        return $midtrans;
 
         // payment proses
+        try {
+            // Get Snap Payment Page URL
+            $paymentUrl = Snap::createTransaction($midtrans)->redirect_url;
+                // simpan link url pembayaran ke tabel trnasaksi
+            $transaction->payment_url= $paymentUrl;
+            $transaction->save();
 
+            // Redirect to Snap Payment Page
+            return redirect($paymentUrl);
+          }
+          catch (Exception $e) {
+            echo $e->getMessage();
+          }
         
     }
     

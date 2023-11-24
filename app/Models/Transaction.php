@@ -22,6 +22,7 @@ class Transaction extends Model
         'payment_url',
         'total_price',
         'status',
+        'transaction_code',
     ];
 
 
