@@ -153,8 +153,6 @@ class FrontendController extends Controller
             'vtweb'=>[]
         ];
 
-        return $midtrans;
-
         // payment proses
         try {
             // Get Snap Payment Page URL

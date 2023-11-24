@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\MytransactionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductGalleryController;
 use App\Http\Controllers\RajaOngkirController;
@@ -40,8 +41,6 @@ Route::middleware(['auth:sanctum','verified',])->group(function(){
     Route::delete('/cart/{id}',[FrontendController::class,'cartDelete'])->name('cart-delete');
     Route::post('/checkout',[FrontendController::class,'checkout'])->name('checkout');
     Route::post('/checkout/success',[FrontendController::class,'success'])->name('checkout-success');
-
-
     Route::get('/checkout/success',[FrontendController::class,'success'])->name('checkout-success');
     
 
@@ -50,6 +49,7 @@ Route::middleware(['auth:sanctum','verified',])->group(function(){
 
 Route::middleware(['auth:sanctum','verified',])->name('dashboard.')->prefix('dashboard')->group(function(){
     Route::get('/', [DashboardController::class,'index'])->name('index');
+    Route::resource('my-transaction', MytransactionController::class)->shallow()->only(['index','show',]);
 
     Route::middleware(['admin'])->group(function(){
         Route::resource('product', ProductController::class);

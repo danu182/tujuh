@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Tranasaction &raquo; # {{ $transaction->id }} {{ $transaction->name }}
+            Tranasaction &raquo; # {{ $transaction->transaction_code }} &raquo; {{ $transaction->name }} &raquo;  {{ $transaction->created_at }} 
         </h2>
     </x-slot>  
 
@@ -56,7 +56,7 @@
                             </tr>
                             <tr>
                                 <th class="border px-6 py-4 text-right">total_price</th>
-                                <td class="border px-6 py-4">{{ number_fromat($transaction->total_price ) }}</td>
+                                <td class="border px-6 py-4">{{ number_format($transaction->total_price ) }}</td>
                             </tr>
                             <tr>
                                 <th class="border px-6 py-4 text-right">status</th>
